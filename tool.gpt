@@ -1,0 +1,21 @@
+---
+Name: Crypto
+Metadata: bundle: true
+Description: Tools providing common cryptographic functions
+Share Tools: Hash
+
+---
+Name: Hash
+Description: Generate a hash of data using the given algorithm and return the result as a hexadecimal string
+Param: data: The data to hash 
+Param: algo: The algorithm to generate a hash with. Supports "sha256" and "md5". Default is "sha256"
+
+#!/usr/bin/env python3 ${GPTSCRIPT_TOOL_DIR}/hash.py
+
+---
+!metadata:*:category
+Crypto
+
+---
+!metadata:*:icon
+https://cdn.jsdelivr.net/npm/@phosphor-icons/core@2/assets/duotone/fingerprint-duotone.svg
