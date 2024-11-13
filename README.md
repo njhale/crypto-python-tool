@@ -10,9 +10,7 @@ To clone this repo and follow along, run the following command:
 git clone git@github.com:otto8-ai/python-hash-tool
 ```
 
----
-
-### Tool Repo Structure
+## Tool Repo Structure
 
 The directory tree below highlights the files required to implement `Hash` in Python and package it for `Otto8`.
 
@@ -23,21 +21,20 @@ python-hash-tool
 └── tool.gpt
 ```
 
----
 
-### Defining the `Hash` Tool
+## Defining the `Hash` Tool
 
-The `tool.gpt` file contains [GPTScript Tool Definitions](https://docs.gptscript.ai/tools/gpt-file-reference) which describe a set of Tools that
-can be used by Agents in `Otto8`.
+The `tool.gpt` file contains [GPTScript Tool Definitions](https://docs.gptscript.ai/tools/gpt-file-reference) which describe a set of Tools that can be used by Agents in `Otto8`.
 Every Tool repository must have a `tool.gpt` file in its root directory.
 
 The Tools defined in this file must have a descriptive `Name` and `Description` that will help Agents understand what the Tool does, what it returns (if anything), and all the `Parameters` it takes.
 Agents use these details to figure out when and how to use the Tool. We call the section of a Tool definition that contains this info a `Preamble`.
 
 We want the `Hash` Tool to return the hash of some given `data`. It would also be nice to support a few different algorithms for the Agent to choose from.
+
 Let's take a look at the `Preamble` for `Hash` to see how that's achieved:
 
-```text
+```yaml
 Name: Hash
 Description: Generate a hash of data using the given algorithm and return the result as a hexadecimal string
 Param: data: The data to hash
@@ -51,11 +48,14 @@ Breaking this down a bit:
 - In this case, the description of the `algo` parameter outlines the valid options (`sha256` or `md5`) and defines a default value (`sha256`)
 - The `Description` explains what `Hash` returns with respect to the given arguments; the hash of `data` using the algorithm selected with `algo`.
 
+<br/>
+
 Immediately below the `Preamble` is the `Tool Body`, which tells `Otto8` how to execute the Tool:
 
-```text
+```bash
  #!/usr/bin/env python3 ${GPTSCRIPT_TOOL_DIR}/hash.py
 ```
+
 
 This is where the magic happens.
 
@@ -67,9 +67,11 @@ To oversimplify, when an Agent calls the `Hash` Tool, `Otto8` reads this line an
 4. Projects the call arguments onto environment variables (`DATA` and `ALGO`)
 5. Runs `python3 ${GPTSCRIPT_TOOL_DIR}/hash.py`.
 
+<br/>
+
 Putting it all together, here's the complete definition of the `Hash` Tool.
 
-```text
+```yaml
 Name: Hash
 Description: Generate a hash of data using the given algorithm and return the result as a hexadecimal string
 Param: data: The data to hash
@@ -78,16 +80,21 @@ Param: algo: The algorithm to generate a hash with. Default is "sha256". Support
 #!/usr/bin/env python3 ${GPTSCRIPT_TOOL_DIR}/hash.py
 ```
 
-### Tool Metadata
+
+
+## Tool Metadata
 
 The `tool.gpt` file also provides the following metadata for use in `Otto8`:
 
 - `!metadata:*:category` which tags Tools with the `Crypto` category to promote organization and discovery
 - `!metadata:*:icon` which assigns `https://cdn.jsdelivr.net/npm/@phosphor-icons/core@2/assets/duotone/fingerprint-duotone.svg` as the Tool icon
 
-Where `*` is a wild card pattern that applies the metadata to all Tools in a `tool.gpt`.
+<br/>
 
-```text
+
+> **Note:** `*` is a wild card pattern that applies the metadata to all Tools in a `tool.gpt`.
+
+```yaml
 ---
 !metadata:*:category
 Crypto
@@ -97,17 +104,26 @@ Crypto
 https://cdn.jsdelivr.net/npm/@phosphor-icons/core@2/assets/duotone/fingerprint-duotone.svg
 ```
 
-**Note:** Metadata can be applied to a specific Tool by either specifying the exact name (e.g. `!metadata:Hash:category`) or by adding the metadata directly to a Tool's `Preamble`:
+<blockquote>
+<details>
+    <summary>
+    <strong>Note:</strong> Metadata can be applied to a specific Tool by either specifying the exact name (e.g. <code>!metadata:Hash:category</code>) or by adding the metadata directly to a Tool's <code>Preamble</code>
+    </summary>
 
-```text
+```yaml
 Name: Hash
 Metadata: category: Crypto
 Metadata: icon: https://cdn.jsdelivr.net/npm/@phosphor-icons/core@2/assets/duotone/fingerprint-duotone.svg
 ```
+</details>
+</blockquote>
 
-### Complete `tool.gpt`
+<br/>
+<details>
+    <summary style="font-size: 1.25rem;">Complete <code>hash.py</code></summary>
 
-```text
+
+```yaml
 ---
 Name: Hash
 Description: Generate a hash of data using the given algorithm and return the result as a hexadecimal string
@@ -125,9 +141,9 @@ Crypto
 https://cdn.jsdelivr.net/npm/@phosphor-icons/core@2/assets/duotone/fingerprint-duotone.svg
 ```
 
----
+</details>
 
-### Implementing Business Logic
+## Implementing Business Logic
 
 The `hash.py` file executed by the `Tool Body` is the concrete implementation of the Tool's business logic.
 
@@ -193,7 +209,8 @@ This object contains the hash and the algorithm used to generate it.
 Producing structured data with extra contextual info (e.g. the algorithm) is considered good form.
 It's a pattern that improves the Agent's ability to correctly use the Tool's result over time.
 
-### Complete `hash.py`
+<details>
+    <summary style="font-size: 1.25rem;">Complete <code>hash.py</code></summary>
 
 ```python
 import hashlib
@@ -239,9 +256,9 @@ if __name__ == '__main__':
         sys.exit(1)
 ```
 
----
+</details>
 
-### Testing `hash.py` Locally
+## Testing `hash.py` Locally
 
 Before adding a Tool to `Otto8`, verify that the Python business logic works on your machine.
 
@@ -276,36 +293,76 @@ To do this, run through the following steps in the root of your local fork:
    | `DATA='foo' ALGO='md5' python3 hash.py`       | `{ "algo": "md5", "hash": "acbd18db4cc2f85cedef654fccc4a4d8" }`                                    |
    | `DATA='foo' ALGO='whirlpool' python3 hash.py` | `Error: Unsupported hash algorithm: whirlpool not in ['sha256', 'md5']`                            |
 
----
 
-### Adding The `Hash` Tool to `Otto8`
+## Adding The `Hash` Tool to `Otto8`
 
 Before a Tool can be used by an Agent, an admin must first add the Tool to `Otto8` by performing the steps below:
 
-1. Navigate to the `Otto8` admin UI in a browser and open the Tools page by clicking the "Tools" button in the left drawer
-   ![Open The Tools Page](https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/add-tools-step-0.png "Open The Tools Page")
+1. <details>
+       <summary>Navigate to the <code>Otto8</code> admin UI in a browser and open the Tools page by clicking the <em>Tools</em> button in the left drawer</summary>
+       <div style="text-align: left; margin-top: 10px;">
+           <img src="https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/add-tools-step-0.png"
+                alt="Open The Tools Page"
+                style="max-width: 500px; max-height: 300px; width: auto; height: auto;">
+       </div>
+   </details>
 
-2. Click the "Register New Tool" button on the right
-   ![Click The Register New Tool Button](https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/add-tools-step-1.png "Click The Register New Tool Button")
+2. <details>
+       <summary>Click the <em>Register New Tool</em> button on the right</summary>
+       <div style="text-align: left; margin-top: 10px;">
+           <img src="https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/add-tools-step-1.png"
+                alt="Click The Register New Tool Button"
+                style="max-width: 500px; max-height: 300px; width: auto; height: auto;">
+       </div>
+   </details>
 
-3. Type the Tool repo reference into the modal's input box -- in this example `github.com/otto8-ai/python-hash-tool` -- and click "Register Tool"
-   ![Enter Tool Repo Reference](https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/add-tools-step-2.png "Enter Tool Repo Reference")
+3. <details>
+       <summary>Type the Tool repo reference into the modal's input box and click <em>Register Tool</em></summary>
+       <div style="text-align: left; margin-top: 10px;">
+           <img src="https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/add-tools-step-2.png"
+                alt="Enter Tool Repo Reference"
+                style="max-width: 500px; max-height: 300px; width: auto; height: auto;">
+       </div>
+   </details>
 
-Afterwords, the Tool will be available for use in `Otto8`.
+<br/>
 
-You can search for the Tool by category or name on the Tools page to verify:
+<details>
+    <summary>Once the tool has been added, you can search for it by category or name on the Tools page to verify</summary>
+    <div style="text-align: left; margin-top: 10px;">
+        <img src="https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/add-tools-step-3.png"
+             alt="Search For Newly Added Tools"
+             style="max-width: 500px; max-height: 300px; width: auto; height: auto;">
+    </div>
+</details>
 
-![Search For Newly Added Tools](https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/add-tools-step-3.png "Search For Newly Added Tools")
-
-### Using The `Hash` Tool in an Agent
+## Using The `Hash` Tool in an Agent
 
 To use the `Hash` Tool in an Agent, open the Agent's Edit page, then:
 
-1. Click the "Add Tool" button under either the "Agent Tools" or "User Tools" sections
-   ![Click The Add Tool Button](https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/use-tools-step-0.png "Click The Add Tool Button")
+1. <details>
+       <summary>Click the <em>Add Tool</em> button under either the <em>Agent Tools</em> or <em>User Tools</em> sections</summary>
+       <div style="text-align: left; margin-top: 10px;">
+           <img src="https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/use-tools-step-0.png"
+                alt="Click The Add Tool Button"
+                style="max-width: 500px; max-height: 300px; width: auto; height: auto;">
+       </div>
+   </details>
 
-2. Search for "Hash" or "Crypto" in the Tool search pop-out and select the `Hash` Tool
-   ![Add Hash Tool To Agent](https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/use-tools-step-1.png "Add Hash Tool To Agent")
+2. <details>
+       <summary>Search for "Hash" or "Crypto" in the Tool search pop-out and select the <code>Hash</code> Tool</summary>
+       <div style="text-align: left; margin-top: 10px;">
+           <img src="https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/use-tools-step-1.png"
+                alt="Add Hash Tool To Agent"
+                style="max-width: 500px; max-height: 300px; width: auto; height: auto;">
+       </div>
+   </details>
 
-3. Ask the Agent to generate a hash
-   ![Ask The Agent To Generate a Hash](https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/use-tools-step-2.png "Ask The Agent To Generate a Hash")
+3. <details>
+       <summary>Ask the Agent to generate a hash</summary>
+       <div style="text-align: left; margin-top: 10px;">
+           <img src="https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/use-tools-step-2.png"
+                alt="Ask The Agent To Generate a Hash"
+                style="max-width: 500px; max-height: 300px; width: auto; height: auto;">
+       </div>
+   </details>
