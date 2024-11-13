@@ -1,13 +1,13 @@
 ## Writing your first tool in Python
 
-[python-crypto-tool](https://github.com/otto8-ai/python-crypto-tool) contains a reference `Python` implementation of the `Hash` Tool.
+[python-hash-tool](https://github.com/otto8-ai/python-hash-tool) contains a reference `Python` implementation of the `Hash` Tool.
 
 This guide walks through the structure and design of the Tool and outlines the packaging requirements for [Otto8](https://docs.otto8.ai/concepts/agents)
 
 To clone this repo and follow along, run the following command:
 
 ```bash
-git clone git@github.com:otto8-ai/python-crypto-tool
+git clone git@github.com:otto8-ai/python-hash-tool
 ```
 
 ---
@@ -17,7 +17,7 @@ git clone git@github.com:otto8-ai/python-crypto-tool
 The directory tree below highlights the files required to implement `Hash` in Python and package it for `Otto8`.
 
 ```
-python-crypto-tool
+python-hash-tool
 ├── hash.py
 ├── requirements.txt
 └── tool.gpt
@@ -105,32 +105,9 @@ Metadata: category: Crypto
 Metadata: icon: https://cdn.jsdelivr.net/npm/@phosphor-icons/core@2/assets/duotone/fingerprint-duotone.svg
 ```
 
-### Tool Bundles
-
-Tool Bundles provide a mechanism to ship a set of Tools as a single, unified, suite.
-When an Agent imports a Bundle, it gets access to all of the Tools shared by the Bundle.
-There's typically one Tool Bundle per `tool.gpt` and the convention is to name the Bundle after the category.
-In practice, Bundles are just Tools with some additional metadata (`Metadata: bundle: true`), that make use of the `Share Tools` directive to "export" other Tools defined in `tool.gpt`.
-
-The Bundle defined in this reference implementation is named `Crypto` and shares the `Hash` Tool.
-
-```text
----
-Name: Crypto
-Metadata: bundle: true
-Description: Tools providing common cryptographic functions
-Share Tools: Hash
-```
-
 ### Complete `tool.gpt`
 
 ```text
----
-Name: Crypto
-Metadata: bundle: true
-Description: Tools providing common cryptographic functions
-Share Tools: Hash
-
 ---
 Name: Hash
 Description: Generate a hash of data using the given algorithm and return the result as a hexadecimal string
@@ -306,30 +283,29 @@ To do this, run through the following steps in the root of your local fork:
 Before a Tool can be used by an Agent, an admin must first add the Tool to `Otto8` by performing the steps below:
 
 1. Navigate to the `Otto8` admin UI in a browser and open the Tools page by clicking the "Tools" button in the left drawer
-   ![Open The Tools Page](https://raw.githubusercontent.com/otto8-ai/python-crypto-tool/refs/heads/main/docs/add-tools-step-0.png "Open The Tools Page")
+   ![Open The Tools Page](https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/add-tools-step-0.png "Open The Tools Page")
 
 2. Click the "Register New Tool" button on the right
-   ![Click The Register New Tool Button](https://raw.githubusercontent.com/otto8-ai/python-crypto-tool/refs/heads/main/docs/add-tools-step-1.png "Click The Register New Tool Button")
+   ![Click The Register New Tool Button](https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/add-tools-step-1.png "Click The Register New Tool Button")
 
-3. Type the Tool repo reference into the modal's input box -- in this example `github.com/otto8-ai/python-crypto-tool` -- and click "Register Tool"
-   ![Enter Tool Repo Reference](https://raw.githubusercontent.com/otto8-ai/python-crypto-tool/refs/heads/main/docs/add-tools-step-2.png "Enter Tool Repo Reference")
+3. Type the Tool repo reference into the modal's input box -- in this example `github.com/otto8-ai/python-hash-tool` -- and click "Register Tool"
+   ![Enter Tool Repo Reference](https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/add-tools-step-2.png "Enter Tool Repo Reference")
 
 Afterwords, the Tool will be available for use in `Otto8`.
 
 You can search for the Tool by category or name on the Tools page to verify:
 
-![Search For Newly Added Tools](https://raw.githubusercontent.com/otto8-ai/python-crypto-tool/refs/heads/main/docs/add-tools-step-3.png "Search For Newly Added Tools")
+![Search For Newly Added Tools](https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/add-tools-step-3.png "Search For Newly Added Tools")
 
 ### Using The `Hash` Tool in an Agent
 
 To use the `Hash` Tool in an Agent, open the Agent's Edit page, then:
 
 1. Click the "Add Tool" button under either the "Agent Tools" or "User Tools" sections
-   ![Click The Add Tool Button](https://raw.githubusercontent.com/otto8-ai/python-crypto-tool/refs/heads/main/docs/use-tools-step-0.png "Click The Add Tool Button")
+   ![Click The Add Tool Button](https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/use-tools-step-0.png "Click The Add Tool Button")
 
-2. Search for "Hash" or "Crypto" in the Tool search pop-out and select the `Hash` Tool or flip the toggle to the right of `Crypto` to add all Tools in the `Crypto` Bundle (which is only `Hash` for now)
-   ![Add Hash Tool To Agent](https://raw.githubusercontent.com/otto8-ai/python-crypto-tool/refs/heads/main/docs/use-tools-step-1.png "Add Hash Tool To Agent")
-   ![Add Crypto Bundle To Agent](https://raw.githubusercontent.com/otto8-ai/python-crypto-tool/refs/heads/main/docs/use-tools-step-2.png "Add Crypto Bundle To Agent")
+2. Search for "Hash" or "Crypto" in the Tool search pop-out and select the `Hash` Tool
+   ![Add Hash Tool To Agent](https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/use-tools-step-1.png "Add Hash Tool To Agent")
 
 3. Ask the Agent to generate a hash
-   ![Ask The Agent To Generate a Hash](https://raw.githubusercontent.com/otto8-ai/python-crypto-tool/refs/heads/main/docs/use-tools-step-3.png "Ask The Agent To Generate a Hash")
+   ![Ask The Agent To Generate a Hash](https://raw.githubusercontent.com/otto8-ai/python-hash-tool/refs/heads/main/docs/use-tools-step-2.png "Ask The Agent To Generate a Hash")
