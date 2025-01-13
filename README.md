@@ -86,10 +86,10 @@ Param: algo: The algorithm to generate a hash with. Default is "sha256". Support
 
 ## Tool Metadata
 
-The `tool.gpt` file also provides the following metadata for use in Obot:
+The snippet below (from the `tool.gpt` file) also provides the following metadata for use in Obot:
 
-- `!metadata:*:category` which tags tools with the `Crypto` category to promote organization and discovery
-- `!metadata:*:icon` which assigns `https://cdn.jsdelivr.net/npm/@phosphor-icons/core@2/assets/duotone/fingerprint-duotone.svg` as the tool icon
+- `!metadata:*:category` which tags all tools in the `tool.gpt` file with the `Crypto` category to promote organization and discovery
+- `!metadata:*:icon` which assigns `https://cdn.jsdelivr.net/npm/@phosphor-icons/core@2/assets/duotone/fingerprint-duotone.svg` as the tool icon to all tools in the `tool.gpt` file
 
 <br/>
 
